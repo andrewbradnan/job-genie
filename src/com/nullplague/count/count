@@ -1,1 +1,0 @@
-scala -classpath . com.nullplague.count.count $1

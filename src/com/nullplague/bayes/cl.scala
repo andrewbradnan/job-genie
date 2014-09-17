@@ -23,12 +23,7 @@ object cl {
         print("Category: ")
         val cat = readLine()
         
-        if (!new java.io.File(cat).exists)
-        {
-            val newfile = new java.io.FileOutputStream(cat)
-            newfile.close()
-        }
-
+        makeExist(cat)
         val catmap = inout.read(scala.io.Source.fromFile(cat))
         val addedmap = bayes.add(inmap, catmap)
         
@@ -53,12 +48,20 @@ object cl {
         var unique = Set[String]() ++ urls
         unique -- history
     }
+    def makeExist(file: String) : Unit = {
+        if (!new java.io.File(file).exists)
+        {
+            val newfile = new java.io.FileOutputStream(file)
+            newfile.close()
+        }
+    }
     def main(args: Array[String]): Unit = {
         if (!new java.io.File(".history").exists)
         {
             val newfile = new java.io.FileOutputStream(".history")
             newfile.close()
         }
+        makeExist(".history")
         val history = inout.readSet(scala.io.Source.fromFile(".history"))
 
         val urls = jobs(history)
