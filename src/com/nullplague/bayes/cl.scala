@@ -4,9 +4,11 @@ import scala.io.Source
 import scala.io.StdIn.readLine
 
 object cl {
-
+	val root = "http://seattle.craigslist.org"
+	val jobs = "/est/sof"
+	val h = ".history"
     def html(url: String) = {
-        val html = Source.fromURL("http://seattle.craigslist.org" + url)
+        val html = Source.fromURL(root + url)
         val s = html.mkString
         
         val pattern = """<[^>]*>""".r
@@ -34,16 +36,16 @@ object cl {
         out_stream.close
         out.close
 
-        val history = new java.io.RandomAccessFile(".history", "rw")
+        val history = new java.io.RandomAccessFile(h, "rw")
         history.seek(history.length)
         history.write((url + "\n").getBytes)
     }
 
     def jobs(history: Set[String]) : Set[String] = {
-        val html = Source.fromURL("http://seattle.craigslist.org/est/sof")
+        val html = Source.fromURL(root + jobs)
         val s = html.mkString
         
-        val pattern = """<a\s+href="(/est/sof/[^"]*)""".r
+        val pattern = ("<a\\s+href=\"(" + jobs + "[^\"]*)").r
         val urls = pattern.findAllIn(s).matchData.map(m => m.group(1))
         var unique = Set[String]() ++ urls
         unique -- history
@@ -56,13 +58,8 @@ object cl {
         }
     }
     def main(args: Array[String]): Unit = {
-        if (!new java.io.File(".history").exists)
-        {
-            val newfile = new java.io.FileOutputStream(".history")
-            newfile.close()
-        }
-        makeExist(".history")
-        val history = inout.readSet(scala.io.Source.fromFile(".history"))
+        makeExist(h)
+        val history = inout.readSet(scala.io.Source.fromFile(h))
 
         val urls = jobs(history)
         urls.foreach(categorize(_))
