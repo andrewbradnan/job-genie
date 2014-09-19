@@ -18,10 +18,15 @@ object cl {
     def categorize(url: String) = {
         val txt = html(url)
         println(txt)
-        val inmap = bayes.normalize(bayes.count(txt))
-        //val inmap = bayes.count(dehtml)
+        //val inmap = bayes.normalize(bayes.count(txt))
+        val inmap = bayes.count(txt)
 
-        rank.rank(inmap)
+        val r = rank.rank(inmap)
+        r match {
+            case Some(x) => println(x) 
+        	case _ =>
+        }
+        
         print("Category: ")
         val cat = readLine()
         

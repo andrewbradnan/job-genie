@@ -4,14 +4,38 @@ import scala.io.BufferedSource
 import scala.collection.mutable.Map
 
 object bayes {
-	type Scores = Map[String, Float]
-    def Scores() = Map[String, Float]()
-    
+	type Scores = Map[String, Int]
+    def Scores() = Map[String, Int]()
+    val zero = 0
+    val one = 1
+    val ktotal = "__total"
+    type DB = Map[String, Category]	// "html.cat" -> ("html" -> 4, "fullstack" -> 5, ...)
+    def DB() = Map[String, Category]()
+	type Probabilities = Map[String, Float]
+	
+    def p(in: Scores, cat: Category, db: DB) : Float = { // pcat * pwordcat[1..N]
+	    pcat(db, cat.name) * pwords(in, cat)
+	}
+    def p(in: Scores, db: DB) : Probabilities = { // pcat * pwordcat[1..N]
+	    db.map{ case (cat, counts) => cat -> pcat(db, cat) * pwords(in, db(cat)) }
+	}
+	def pwords(in: Scores, cat: Category) = {
+	    in.foldLeft(zero) { (count, pr) => 
+	        val word = pr._1
+	        count * cat.p(word) }
+	}
+    // category probability overall
+    def pcat(db: DB, cat: String) : Float = db(cat)(ktotal) / sum(db, ktotal)
+    def sum(db: DB, word: String) : Float = {
+        db.foldLeft(zero) { (count, pr) => 
+            val cat = pr._2
+            count + cat(ktotal) }
+    }
     // add two maps together
     def add(a: Scores, b: Scores) : Scores = {
         val rt = Scores()
         rt ++ a
-        for((word, count) <- a) rt(word) = count + b.getOrElse(word, 0.0f)
+        for((word, count) <- a) rt(word) = count + b.getOrElse(word, zero)
        	for((word, count) <- b) rt(word) = a.getOrElse(word,b(word))
        	rt
     }
@@ -21,7 +45,7 @@ object bayes {
     def countStrings(strs: List[String]) = {
         strs.filter(word => !stop_words.exists(word == _)).
 		foldLeft(counts) {
-			(count, word) => count + (word -> (count.getOrElse(word, 0.0f) + 1.0f)) }
+			(count, word) => count + (word -> (count.getOrElse(word, zero) + one)) }
     }
     def count(lines: List[String]) : Scores = {
 		Scores() ++ countStrings(lines.flatMap(_.split("\\W+")))
@@ -30,15 +54,15 @@ object bayes {
 		Scores() ++ countStrings(lines.split("\\W+").toList)
     }
     def normalize(in: Scores) : Map[String, Float] = {
-		val total = in.foldLeft(0.0f) {(total,pr) => total + pr._2 }
+		val total = in.foldLeft(zero) {(total,pr) => total + pr._2 }
 		val avg = total / in.size
 		in.map(pr => (pr._1, pr._2 / avg.toFloat))
     }
     // multiply a * b
     def mul(a: Scores, b: Scores) : Float = {
         val m = Scores()
-   		for((word, count) <- a) m(word) = count * b.getOrElse(word, 0.0f)
-   		m.foldLeft(0.0f) { (total, pair) => total + pair._2 }
+   		for((word, count) <- a) m(word) = count * b.getOrElse(word, zero)
+   		m.foldLeft(zero) { (total, pair) => total + pair._2 }
     }
     // open a BufferedSource from stdin or filename
     def open(io: Any) : BufferedSource = { 

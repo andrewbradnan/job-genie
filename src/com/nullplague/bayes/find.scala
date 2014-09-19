@@ -2,7 +2,8 @@ package com.nullplague.bayes
 import scala.io.StdIn.readLine
 
 object find {
-	def link(url: String) = <p><a href={cl.root + url}>{cl.root + url}</a></p>
+	def link(url: String) = <p><a href={cl.root + url}>{cl.root + url}</a><br/></p>
+	
     def report(found: Set[String]) = <html>
     	<body>
     		{found.map(url => link(url)) }
@@ -15,10 +16,14 @@ object find {
         val jobs = cl.jobs(history)
         val found = jobs.filter(j => {
         	val txt = cl.html(j)
-   	        val inmap = bayes.normalize(bayes.count(txt))
-        	val ranked_as = rank.rank(inmap)._2
-   	        println("Ranking " + j + " " + ranked_as)
-        	ranked_as == args(0)
+   	        val inmap = bayes.count(txt)
+        	val ranked_as = rank.rank(inmap)
+        	ranked_as match { 
+        	    case Some(x) => println("Ranking " + j + " " + x._2)
+        	    x._2 == args(0)
+        	    case None => false
+        	}
+        	
         })
         println(report(found))
     }

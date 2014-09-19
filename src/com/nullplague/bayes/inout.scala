@@ -8,10 +8,10 @@ object inout {
         val content = io.getLines.map(_.split(","))
         while(content.hasNext) {
             val strs = content.next()
-            val count = strs(1).toFloat
+            val count = strs(1).toInt
         	rt += (strs(0) -> count)
         }
-        bayes.normalize(rt)
+        rt
 	}
 	def readSet(io: scala.io.BufferedSource) : Set[String] = {
         var rt = Set[String]()
