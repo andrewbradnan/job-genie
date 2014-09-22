@@ -2,25 +2,28 @@ package com.nullplague.bayes
 
 import scala.io.BufferedSource
 import scala.collection.mutable.Map
+import scala.collection.immutable.SortedMap
 
 object bayes {
 	type Scores = Map[String, Int]
-    def Scores() = Map[String, Int]()
+    def Scores() = Map[String, Int](ktotal -> 1)
     val zero = 0
     val one = 1
     val ktotal = "__total"
     type DB = Map[String, Category]	// "html.cat" -> ("html" -> 4, "fullstack" -> 5, ...)
     def DB() = Map[String, Category]()
-	type Probabilities = Map[String, Float]
+	type Probabilities = SortedMap[Float,String]
+	def Probabilities() = SortedMap[Float,String]()
 	
     def p(in: Scores, cat: Category, db: DB) : Float = { // pcat * pwordcat[1..N]
 	    pcat(db, cat.name) * pwords(in, cat)
 	}
     def p(in: Scores, db: DB) : Probabilities = { // pcat * pwordcat[1..N]
-	    db.map{ case (cat, counts) => cat -> pcat(db, cat) * pwords(in, db(cat)) }
+	    val ps = db.map{ case (cat, counts) => pcat(db, cat) * pwords(in, db(cat)) -> cat }
+	    Probabilities() ++ ps
 	}
 	def pwords(in: Scores, cat: Category) = {
-	    in.foldLeft(zero) { (count, pr) => 
+	    in.foldLeft(1.0f) { (count, pr) => 
 	        val word = pr._1
 	        count * cat.p(word) }
 	}

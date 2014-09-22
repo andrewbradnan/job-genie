@@ -11,29 +11,22 @@ object rank {
 
     	files.filter(_.getName.reverse.startsWith(filter.reverse))
     }
-    def maps() : bayes.DB = {
+    def db : bayes.DB = {
         val f = files(".cat")
         val rt = bayes.DB()
         for (file <- f)
             rt += file.getName -> new Category(file.getName, inout.read(scala.io.Source.fromFile(file)))
         rt
     }
+    def ranks(in: bayes.Scores, db: bayes.DB) = {
+    	bayes.p(in, db)
+    }
     def rank(in: bayes.Scores) : Option[(Float, String)] = {
-        val f = files(".cat")
-        var ranks = SortedMap[Float,String]()
-        var rank = 0.0f
-        for (cat <- maps()) 
-        {
-            val counts = cat._2.counts
-            val name = cat._2.name
-            val score = bayes.mul(in, counts)
-            ranks = ranks + ((score, name))
-        }
-        
-        if (ranks.size > 0) Some(ranks.last) else None
-     }
+        val r = ranks(in, db)
+        if (r.size > 0) Some(r.last) else None
+    }
     def main(args: Array[String]): Unit = {
-        rank(inout.read(stdin))
+        println(ranks(inout.read(stdin), db))
     }
 
 }
