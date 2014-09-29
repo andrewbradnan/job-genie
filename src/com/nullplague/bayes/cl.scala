@@ -2,6 +2,7 @@ package com.nullplague.bayes
 
 import scala.io.Source
 import scala.io.StdIn.readLine
+import bayes._
 
 object cl {
 	val root = "http://seattle.craigslist.org"
@@ -15,24 +16,13 @@ object cl {
         val dehtml = pattern.replaceAllIn(s, " ")
         """\n\s*\n""".r.replaceAllIn(dehtml, "\n")	// no blank lines
     }
-    def categorize(url: String) = {
-        val txt = html(url)
-        println(txt)
-        //val inmap = bayes.normalize(bayes.count(txt))
-        val inmap = bayes.count(txt)
-
-        val r = rank.rank(inmap)
-        r match {
-            case Some(x) => println(x) 
-        	case _ =>
-        }
-        
+	def saveCategory(in: Scores, url: String) = {
         print("Category: ")
         val cat = readLine()
-        
+        import bayes.add
         makeExist(cat)
         val catmap = inout.read(scala.io.Source.fromFile(cat))
-        val addedmap = bayes.add(inmap, catmap)
+        val addedmap = bayes.add(in, catmap)
         
         val out = new java.io.FileOutputStream(cat)
         var out_stream = new java.io.PrintStream(out)
@@ -44,6 +34,20 @@ object cl {
         val history = new java.io.RandomAccessFile(h, "rw")
         history.seek(history.length)
         history.write((url + "\n").getBytes)
+	}
+    def categorize(url: String) = {
+        val txt = html(url)
+        println(txt)
+        //val inmap = normalize(count(txt))
+        val inmap = bayes.count(txt)
+
+        val r = rank.rank(inmap)
+        r match {
+            case Some(x) => println(x) 
+        	case _ =>
+        }
+        
+        saveCategory(inmap, url)
     }
 
     def jobs(history: Set[String]) : Set[String] = {

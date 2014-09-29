@@ -1,0 +1,370 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1265\cocoasubrtf210
+{\fonttbl\f0\fswiss\fcharset0 ArialMT;\f1\fnil\fcharset0 TrebuchetMS;\f2\fnil\fcharset0 Menlo-Regular;
+\f3\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;\red11\green96\blue192;\red67\green67\blue67;\red234\green234\blue234;
+\red117\green117\blue117;\red193\green193\blue193;\red52\green52\blue52;\red109\green110\blue114;\red135\green135\blue135;
+\red213\green213\blue213;}
+{\*\listtable{\list\listtemplateid1\listhybrid{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{disc\}}{\leveltext\leveltemplateid1\'01\uc0\u8226 ;}{\levelnumbers;}\fi-360\li720\lin720 }{\listname ;}\listid1}
+{\list\listtemplateid2\listhybrid{\listlevel\levelnfc0\levelnfcn0\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{decimal\}.}{\leveltext\leveltemplateid101\'02\'00.;}{\levelnumbers\'01;}\fi-360\li720\lin720 }{\listname ;}\listid2}}
+{\*\listoverridetable{\listoverride\listid1\listoverridecount0\ls1}{\listoverride\listid2\listoverridecount0\ls2}}
+\margl1440\margr1440\vieww17300\viewh13460\viewkind0
+\deftab720
+
+\itap1\trowd \taflags1 \trgaph108\trleft-108 \trbrdrt\brdrnil \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalt \clshdrawnil \clwWidth1200\clftsWidth3 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadl0 \clpadr0 \gaph\cellx4320
+\clvertalt\clvertalbase \clshdrawnil \clwWidth13300\clftsWidth3 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadl0 \clpadr0 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\qc
+
+\f0\fs2 \cf2 \
+\pard\intbl\itap1\pardeftab720\qc
+
+\fs48 \cf3 \
+\pard\intbl\itap1\pardeftab720\qc
+
+\fs2 \cf2 down vote\cell 
+\pard\intbl\itap1\pardeftab720\sa273
+
+\fs28 \cf0 I realize that this is an old question, with an established answer. The reason I'm posting is that is the accepted answer has many elements of kNN (k nearest neighbor), a different algorithm.\
+Both kNN and NaiveBayes are classification algorithms. Conceptually, kNN uses the idea of "nearness" to classify new entities. In kNN 'nearness' is modeled with ideas such as Euclidean Distance or Cosine Distance. By contrast, in NaiveBayes, the concept of 'probability' is used to classify new entities.\
+Since the question is about Naive Bayes, here's how I'd describe the ideas and steps to someone. I'll try to do it with as few equations and in plain English as much as possible.\
+\pard\intbl\itap1\pardeftab720\sa301
+
+\f1\b\fs30 \cf0 First, Conditional Probability & Bayes' Rule\
+\pard\intbl\itap1\pardeftab720\sa273
+
+\f0\b0\fs28 \cf0 Before someone can understand and appreciate the nuances of Naive Bayes', they need to know a couple of related concepts first, namely, the idea of Conditional Probability, and Bayes' Rule. (If you are familiar with these concepts, skip to the section titled 
+\b Getting to Naive Bayes'
+\b0 )\
+\pard\intbl\itap1\pardeftab720\sa273
+
+\b \cf0 Conditional Probability
+\b0  in plain English: What is the probability that something will happen, 
+\i given that something else
+\i0  has already happened.\
+Let's say that there is some Outcome O. And some Evidence E. From the way these probabilities are defined: The Probability of having 
+\i both
+\i0  the Outcome O and Evidence E is: (Probabilty of O occuring) multiplied by the (Prob of E given that O happened)\
+\pard\intbl\itap1\pardeftab720\sa273
+
+\i \cf0 One Example to understand Conditional Probability:
+\i0 \
+Let say we have a collection of US Senators. Senators could be Democrats or Republicans. They are also either male or female.\
+If we select one senator completely randomly, what is the probability that this person is a female Democrat? Conditional Probability can help us answer that.\
+Probability of (Democrat and Female Senator)= Prob(Senator is Democrat) multiplied by Conditional Probability of Being Female given that they are a Democrat.\
+\pard\intbl\itap1\pardeftab720
+
+\f2 \cf0 \cb4   P(Democrat & Female) = P(Democrat) x P(Female / Democrat) \
+\pard\intbl\itap1\pardeftab720\sa273
+
+\f0 \cf0 \cb1 We could compute the exact same thing, the reverse way:\
+\pard\intbl\itap1\pardeftab720
+
+\f2 \cf0 \cb4   P(Democrat & Female) = P(Female) x P(Democrat / Female) \
+\pard\intbl\itap1\pardeftab720\sa301
+
+\f1\b\fs30 \cf0 \cb1 Understanding Bayes Rule\
+\pard\intbl\itap1\pardeftab720\sa273
+
+\f0\b0\fs28 \cf0 Conceptually, this is a way to go from P(Evidence/ Known Outcome) to P(Outcome/Known Evidence). Often, we know how frequently some particular evidence is observed, 
+\i given a known outcome
+\i0 . We have to use this known fact to compute the reverse, to compute the chance of that 
+\i outcome happening
+\i0 , given the evidence.\
+P(Outcome given that we know some Evidence) = P(Evidence given that we know the Outcome) times Prob(Outcome), scaled by the P(Evidence)\
+The classic example to understand Bayes' Rule:\
+\pard\intbl\itap1\pardeftab720
+
+\f2 \cf0 \cb4 Probability of Disease D given Test-positive = \
+\
+     Prob(Test is positive/Disease) *P(Disease) \
+     _______________________________________________________\
+     (scaled by) Prob(Testing Positive, with or without the disease)\
+\pard\intbl\itap1\pardeftab720\sa273
+
+\f0 \cf0 \cb1 Now, all this was just preamble, to get to Naive Bayes.\
+\pard\intbl\itap1\pardeftab720\sa383
+
+\f1\b\fs38 \cf0 Getting to Naive Bayes'\
+\pard\intbl\itap1\pardeftab720\sa273
+
+\f0\b0\fs28 \cf0 So far, we have talked only about one piece of evidence. In reality, we have to predict an outcome given 
+\b multiple evidence.
+\b0  In that case, the math gets very complicated. To get around that complication, one approach is to 'uncouple' multiple pieces of evidence, and to treat each of piece of evidence as independent. This approach is why this is called 
+\i naive
+\i0  Bayes.\
+\pard\intbl\itap1\pardeftab720
+
+\f2 \cf0 \cb4 P(Outcome/Multiple Evidence) = \
+P(Evidence1/Outcome) x P(Evidence2/outcome) x ... x P(EvidenceN/outcome) x P(Outcome)\
+scaled by P(Multiple Evidence)\
+\pard\intbl\itap1\pardeftab720\sa273
+
+\f0 \cf0 \cb1 Many people choose to remember this as:\
+\pard\intbl\itap1\pardeftab720
+
+\f2 \cf0 \cb4 P(outcome/evidence) = P(Likelihood of Evidence) x Prior prob of outcome\
+                      ___________________________________________\
+                           P(Evidence)\
+\pard\intbl\itap1\pardeftab720\sa273
+
+\f0 \cf0 \cb1 Notice a few things about this equation:\
+\pard\intbl\itap1\tx220\tx720\pardeftab720\li720\fi-720
+\ls1\ilvl0\cf0 {\listtext	\'95	}If the Prob(evidence/outcome) is 1, then we are just multiplying by 1.\
+{\listtext	\'95	}If the Prob(some particular evidence/outcome) is 0, then the whole prob. becomes 0. If you see contradicting evidence, we can rule out that outcome.\
+{\listtext	\'95	}Since we divide everything by P(Evidence), we can even get away without calculating it.\
+{\listtext	\'95	}The intuition behind multiplying by the 
+\i prior
+\i0  is so that we give high probability to more common outcomes, and low probabilities to unlikely outcomes. These are also called 
+\f2 \cb4 base rates
+\f0 \cb1  and they are a way to scale our predicted probabilities.\
+\pard\intbl\itap1\pardeftab720\sa301
+
+\f1\b\fs30 \cf0 How to Apply NaiveBayes to Predict an Outcome?\
+\pard\intbl\itap1\pardeftab720\sa273
+
+\f0\b0\fs28 \cf0 Just run the formula above for each possible outcome. Since we are trying to 
+\i classify
+\i0 , each outcome is called a 
+\f2 \cb4 class
+\f0 \cb1  and it has a 
+\f2 \cb4 class label.
+\f0 \cb1  Our job is to look at the evidence, to consider how likely it is to be this class or that class, and assign a label to each entity. Again, we take a very simple approach: The class that has the highest probability is declared the "winner" and that class label gets assigned to that combination of evidences.\
+\pard\intbl\itap1\pardeftab720\sa301
+
+\f1\b\fs30 \cf0 Fruit Example\
+\pard\intbl\itap1\pardeftab720\sa273
+
+\f0\b0\fs28 \cf0 Let's try it out on an example to increase our understanding: The OP asked for a 'fruit' identification example.\
+Let's say that we have data on 1000 pieces of fruit. They happen to be 
+\b Banana
+\b0 , 
+\b Orange
+\b0  or some 
+\b Other Fruit
+\b0 . We know 3 characteristics about each fruit:\
+\pard\intbl\itap1\tx220\tx720\pardeftab720\li720\fi-720
+\ls2\ilvl0\cf0 {\listtext	1.	}Whether it is Long\
+{\listtext	2.	}Whether it is Sweet and\
+{\listtext	3.	}If its color is Yellow.\
+\pard\intbl\itap1\pardeftab720\sa273
+\cf0 This is our 'training set.' We will use this to predict the type of any 
+\i new
+\i0  fruit we encounter.\
+\pard\intbl\itap1\pardeftab720
+
+\f2 \cf0 \cb4 Type           Long | Not Long || Sweet | Not Sweet || Yellow |Not Yellow|Total\
+             ___________________________________________________________________\
+Banana      |  400  |    100   || 350   |    150    ||  450   |  50      |  500\
+Orange      |    0  |    300   || 150   |    150    ||  300   |   0      |  300\
+Other Fruit |  100  |    100   || 150   |     50    ||   50   | 150      |  200\
+            ____________________________________________________________________\
+Total       |  500  |    500   || 650   |    350    ||  800   | 200      | 1000\
+             ___________________________________________________________________\
+\pard\intbl\itap1\pardeftab720\sa273
+
+\f0 \cf0 \cb1 We can pre-compute a lot of things about our fruit collection.\
+The so-called "Prior" probabilities. (If we didn't know any of the fruit attributes, this would be our guess.) These are our 
+\f2 \cb4 base rates.
+\f0 \cb1 \
+\pard\intbl\itap1\pardeftab720
+
+\f2 \cf0 \cb4  P(Banana)  = 0.5 (500/1000)\
+ P(Orange)  = 0.3\
+ P(Other Fruit) = 0.2\
+\pard\intbl\itap1\pardeftab720\sa273
+
+\f0 \cf0 \cb1 Probability of "Evidence"\
+\pard\intbl\itap1\pardeftab720
+
+\f2 \cf0 \cb4 p(Long)  = 0.5\
+P(Sweet)  = 0.65\
+P(Yellow) = 0.8\
+\pard\intbl\itap1\pardeftab720\sa273
+
+\f0 \cf0 \cb1 Probability of "Likelihood"\
+\pard\intbl\itap1\pardeftab720
+
+\f2 \cf0 \cb4 P(Long/Banana) = 0.8\
+P(Long/Orange) = 0  [Oranges are never long in all the fruit we have seen.]\
+ ....\
+\
+P(Yellow/Other Fruit) =  50/200 = 0.25\
+P(Not Yellow/Other Fruit)  = 0.75\
+\pard\intbl\itap1\pardeftab720\sa301
+
+\f1\b\fs30 \cf0 \cb1 Given a Fruit, how to classify it?\
+\pard\intbl\itap1\pardeftab720\sa273
+
+\f0\b0\fs28 \cf0 Let's say that we are given the properties of an unknown fruit, and asked to classify it. We are told that the fruit is Long, Sweet and Yellow. Is it a Banana? Is it an Orange? Or Is it some Other Fruit?\
+We can simply run the numbers for each of the 3 outcomes, one by one. Then we choose the highest probability and 'classify' our unknown fruit as belonging to the class that had the highest probability based on our prior evidence (our 1000 fruit training set):\
+\pard\intbl\itap1\pardeftab720
+
+\f2 \cf0 \cb4 P(Banana/Long, Sweet and Yellow) = P(Long/Banana) p(Sweet/Banana).P(Yellow/Banana) x P(banana)\
+                                            __________________________________________________\
+                                                   P(Long). P(Sweet). P(Yellow) \
+\
+                                   0.8 x 0.7 x 0.9 x 0.5\
+                              =    ______________________ \
+                                     P(evidence)\
+\
+                          = 0.252/P(evidence)\
+\
+P(Orange/Long, Sweet and Yellow) = 0\
+\
+P(Other Fruit/Long, Sweet and Yellow) = P(Long/Other fruit) x P(Sweet/Other fruit) x P(Yellow/Other fruit) x P(Other Fruit)\
+                                     = (100/200 x 150/200 x 50/150 x 200/1000) / P(evidence)\
+                                     = 0.01875/P(evidence)\
+\pard\intbl\itap1\pardeftab720\sa273
+
+\f0 \cf0 \cb1 By an overwhelming margin (
+\f2 \cb4 0.252 >> 0.01875
+\f0 \cb1 ), we classify this Sweet/Long/Yellow fruit as likely to be a Banana.\
+\pard\intbl\itap1\pardeftab720\sa301
+
+\f1\b\fs30 \cf0 Why is Bayes Classifier so popular?\
+\pard\intbl\itap1\pardeftab720\sa273
+
+\f0\b0\fs28 \cf0 Look at what it eventually comes down to. Just some counting and multiplication. We can pre-compute all these terms, and so classifying becomes easy, quick and efficient.\
+\pard\intbl\itap1\pardeftab720\sa273
+
+\f2 \cf0 \cb4 Let P(evidence) = z.
+\f0 \cb1  Now we quickly compute the following three quantities.\
+\pard\intbl\itap1\pardeftab720
+
+\f2 \cf0 \cb4 P(Banana/evidence) = 1/z * Prob(Banana) x Prob(E1/Banana).Prob(E2/Banana)...\
+\
+P(Orange/evidence) = 1/z * Prob(Orange) x Prob(E1/Orange).Prob(E2/Orange)...\
+\
+P(Other Fruit/evidence) = 1/z * Prob(Other) x Prob(E1/Other).Prob(E2/Other)...\
+\pard\intbl\itap1\pardeftab720\sa273
+
+\f0 \cf0 \cb1 Assign the class label of whichever is the highest number, and you are done.\
+Despite the name, NaiveBayes turns out to be excellent in certain applications. Text classification is one area where it really shines.\
+Hope that helps in understanding the concepts behind the Naive Bayes algorithm.\
+
+\itap2\trowd \taflags1 \trgaph108\trleft-108 \trbrdrt\brdrnil \trbrdrl\brdrnil \trbrdrt\brdrnil \trbrdrr\brdrnil 
+\clvertalt \clshdrawnil \clwWidth5700\clftsWidth3 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadl0 \clpadr0 \gaph\cellx2880
+\clvertalt \clshdrawnil \clwWidth3700\clftsWidth3 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt40 \clpadl100 \clpadr0 \gaph\cellx5760
+\clvertalt \clshdrawnil \clwWidth3700\clftsWidth3 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadt40 \clpadl100 \clpadr0 \gaph\cellx8640
+\pard\intbl\itap2\pardeftab720
+{\field{\*\fldinst{HYPERLINK "http://stackoverflow.com/a/20556654"}}{\fldrslt 
+\fs26 \cf5 share}}\cf6 |{\field{\*\fldinst{HYPERLINK "http://stackoverflow.com/posts/20556654/edit"}}{\fldrslt 
+\fs26 \cf5 improve this answer}}
+\fs26 \cf0 \nestcell 
+\pard\intbl\itap2\pardeftab720
+{\field{\*\fldinst{HYPERLINK "http://stackoverflow.com/posts/20556654/revisions"}}{\fldrslt \cf2 edited Sep 15 at 10:27}}\
+\pard\intbl\itap2\pardeftab720
+{\field{\*\fldinst{HYPERLINK "http://stackoverflow.com/users/699224/dna"}}{\fldrslt 
+\f3\fs24 \cf0 {{\NeXTGraphic 4feb08afcd7c57acb72bd49fc2bf834d.jpg \width640 \height640 \noorient
+}¬}\pard\intbl\itap2\pardeftab720
+
+\f0\fs26 \cf2 \
+DNA}}\cf5 \
+\pard\intbl\itap2\pardeftab720
+
+\b \cf7 \uc0\u8234 16.4k
+\b0 \cf8 \uc0\u8236 33062\cf5 \nestcell 
+\pard\intbl\itap2\pardeftab720
+\cf0 answered Dec 12 '13 at 23:54\
+\pard\intbl\itap2\pardeftab720
+{\field{\*\fldinst{HYPERLINK "http://stackoverflow.com/users/918215/ram-narasimhan"}}{\fldrslt 
+\f3\fs24 \cf0 {{\NeXTGraphic 16f5fa1320e138acc5b4bc24f3da72ac.jpg \width640 \height640 \noorient
+}¬}\pard\intbl\itap2\pardeftab720
+
+\f0\fs26 \cf2 \
+Ram Narasimhan}}\cf5 \
+\pard\intbl\itap2\pardeftab720
+
+\b \cf7 \uc0\u8234 5,923
+\b0 \cf8 \uc0\u8236 21126\cf5 \nestcell \lastrow\nestrow\cell \row
+
+\itap1\trowd \taflags1 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrt\brdrnil \trbrdrr\brdrnil 
+\clvertalt \clshdrawnil \clwWidth1200\clftsWidth3 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadl0 \clpadr0 \gaph\cellx4320
+\clvertalt\clvertalbase \clshdrawnil \clwWidth13300\clftsWidth3 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadl0 \clpadr0 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720
+\cf0 \cell 
+
+\itap2\trowd \taflags1 \trgaph108\trleft-108 \trbrdrt\brdrnil \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalt\clvertalbase \clshdrawnil \clwWidth300\clftsWidth3 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrs\brdrw20\brdrcf10 \clbrdrr\brdrnil \clpadt100 \clpadl60 \clpadb100 \clpadr0 \gaph\cellx4320
+\clvertalt \clshdrawnil \clwWidth12580\clftsWidth3 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrs\brdrw20\brdrcf10 \clbrdrr\brdrnil \clpadt100 \clpadl140 \clpadb100 \clpadr120 \gaph\cellx8640
+
+\itap3\trowd \taflags1 \trgaph108\trleft-108 \trbrdrt\brdrnil \trbrdrl\brdrnil \trbrdrt\brdrnil \trbrdrr\brdrnil 
+\clvertalt\clvertalbase \clshdrawnil \clwWidth200\clftsWidth3 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadl0 \clpadr0 \gaph\cellx4320
+\clvertalt\clvertalbase \clshdrawnil \clwWidth80\clftsWidth3 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadl0 \clpadr0 \gaph\cellx8640
+\pard\intbl\itap3\pardeftab720
+
+\b\fs28 \cf9 3
+\b0\fs26 \cf7 \nestcell 
+\pard\intbl\itap3\pardeftab720
+\cf7 \'a0\nestcell \lastrow\nestrow\nestcell 
+\pard\intbl\itap2\pardeftab720
+\cf7 Really great explanation, thank you! It was very useful and easy to understand \'96\'a0 {\field{\*\fldinst{HYPERLINK "http://stackoverflow.com/users/2341377/perkinsb1024"}}{\fldrslt \cf2 PerkinsB1024}} \cf9 \uc0\u8234 Dec 16 '13 at 16:40\cf7 \uc0\u8236 \nestcell \nestrow
+
+\itap2\trowd \taflags1 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalt\clvertalbase \clshdrawnil \clwWidth300\clftsWidth3 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrs\brdrw20\brdrcf10 \clbrdrr\brdrnil \clpadt100 \clpadl60 \clpadb100 \clpadr0 \gaph\cellx4320
+\clvertalt \clshdrawnil \clwWidth12580\clftsWidth3 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrs\brdrw20\brdrcf10 \clbrdrr\brdrnil \clpadt100 \clpadl140 \clpadb100 \clpadr120 \gaph\cellx8640
+
+\itap3\trowd \taflags1 \trgaph108\trleft-108 \trbrdrt\brdrnil \trbrdrl\brdrnil \trbrdrt\brdrnil \trbrdrr\brdrnil 
+\clvertalt\clvertalbase \clshdrawnil \clwWidth200\clftsWidth3 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadl0 \clpadr0 \gaph\cellx4320
+\clvertalt\clvertalbase \clshdrawnil \clwWidth80\clftsWidth3 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadl0 \clpadr0 \gaph\cellx8640
+\pard\intbl\itap3\pardeftab720
+
+\b\fs28 \cf9 1
+\b0\fs26 \cf7 \nestcell 
+\pard\intbl\itap3\pardeftab720
+\cf7 \'a0\nestcell \lastrow\nestrow\nestcell 
+\pard\intbl\itap2\pardeftab720
+\cf7 Thanks for the very clear explanation! Easily one of the better ones floating around the web. Question: since each P(outcome/evidence) is multiplied by 1 / z=p(evidence) (which in the fruit case, means each is essentially the probability based solely on previous evidence), would it be correct to say that z doesn't matter at all for Na\'efve Bayes? Which would thus mean that if, say, one ran into a long/sweet/yellow fruit that 
+\b wasn't
+\b0  a banana, it'd be classified incorrectly. \'96\'a0 {\field{\*\fldinst{HYPERLINK "http://stackoverflow.com/users/2564905/covariance"}}{\fldrslt \cf2 covariance}} \cf9 \uc0\u8234 Dec 21 '13 at 2:30\cf7 \uc0\u8236 \nestcell \nestrow
+
+\itap2\trowd \taflags1 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalt\clvertalbase \clshdrawnil \clwWidth300\clftsWidth3 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrs\brdrw20\brdrcf10 \clbrdrr\brdrnil \clpadt100 \clpadl60 \clpadb100 \clpadr0 \gaph\cellx4320
+\clvertalt \clshdrawnil \clwWidth12580\clftsWidth3 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrs\brdrw20\brdrcf10 \clbrdrr\brdrnil \clpadt100 \clpadl140 \clpadb100 \clpadr120 \gaph\cellx8640
+
+\itap3\trowd \taflags1 \trgaph108\trleft-108 \trbrdrt\brdrnil \trbrdrl\brdrnil \trbrdrt\brdrnil \trbrdrr\brdrnil 
+\clvertalt\clvertalbase \clshdrawnil \clwWidth200\clftsWidth3 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadl0 \clpadr0 \gaph\cellx4320
+\clvertalt\clvertalbase \clshdrawnil \clwWidth80\clftsWidth3 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadl0 \clpadr0 \gaph\cellx8640
+\pard\intbl\itap3\pardeftab720
+
+\b\fs28 \cf9 1
+\b0\fs26 \cf7 \nestcell 
+\pard\intbl\itap3\pardeftab720
+\cf7 \'a0\nestcell \lastrow\nestrow\nestcell 
+\pard\intbl\itap2\pardeftab720
+\cf7 @E.Chow Yes, you are correct in that computing z doesn't matter for Naive Bayes. (It is a way to scale the probabilities to be between 0 and 1.) Note that z is product of the probabilities of all the evidence at hand. (It is different from the 
+\i priors
+\i0  which is the base rate of the classes.) You are correct: If you did find a Long/Sweet/Yellow fruit that is not a banana, NB will classify it incorrectly as a banana, based on this training set. The algorithm is a 'best probabilistic guess based on evidence' and so it 
+\i will
+\i0  mis-classify on occasion. \'96\'a0 {\field{\*\fldinst{HYPERLINK "http://stackoverflow.com/users/918215/ram-narasimhan"}}{\fldrslt \cf2 Ram Narasimhan}} \cf9 \uc0\u8234 Dec 21 '13 at 6:35\cf7 \uc0\u8236 \nestcell \nestrow
+
+\itap2\trowd \taflags1 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
+\clvertalt\clvertalbase \clshdrawnil \clwWidth300\clftsWidth3 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrs\brdrw20\brdrcf10 \clbrdrr\brdrnil \clpadt100 \clpadl60 \clpadb100 \clpadr0 \gaph\cellx4320
+\clvertalt \clshdrawnil \clwWidth12580\clftsWidth3 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrs\brdrw20\brdrcf10 \clbrdrr\brdrnil \clpadt100 \clpadl140 \clpadb100 \clpadr120 \gaph\cellx8640
+
+\itap3\trowd \taflags1 \trgaph108\trleft-108 \trbrdrt\brdrnil \trbrdrl\brdrnil \trbrdrt\brdrnil \trbrdrr\brdrnil 
+\clvertalt\clvertalbase \clshdrawnil \clwWidth80\clftsWidth3 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadl0 \clpadr0 \gaph\cellx4320
+\clvertalt\clvertalbase \clshdrawnil \clwWidth80\clftsWidth3 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadl0 \clpadr0 \gaph\cellx8640
+\pard\intbl\itap3\pardeftab720
+\cf7 \nestcell 
+\pard\intbl\itap3\pardeftab720
+\cf7 \nestcell \lastrow\nestrow\nestcell 
+\pard\intbl\itap2\pardeftab720
+\cf7 \nestcell \nestrow
+
+\itap2\trowd \taflags1 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrt\brdrnil \trbrdrr\brdrnil 
+\clvertalt\clvertalbase \clshdrawnil \clwWidth300\clftsWidth3 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrs\brdrw20\brdrcf10 \clbrdrr\brdrnil \clpadt100 \clpadl60 \clpadb100 \clpadr0 \gaph\cellx4320
+\clvertalt \clshdrawnil \clwWidth12580\clftsWidth3 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrs\brdrw20\brdrcf10 \clbrdrr\brdrnil \clpadt100 \clpadl140 \clpadb100 \clpadr120 \gaph\cellx8640
+
+\itap3\trowd \taflags1 \trgaph108\trleft-108 \trbrdrt\brdrnil \trbrdrl\brdrnil \trbrdrt\brdrnil \trbrdrr\brdrnil 
+\clvertalt\clvertalbase \clshdrawnil \clwWidth80\clftsWidth3 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadl0 \clpadr0 \gaph\cellx4320
+\clvertalt\clvertalbase \clshdrawnil \clwWidth80\clftsWidth3 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadl0 \clpadr0 \gaph\cellx8640
+\pard\intbl\itap3\pardeftab720
+\cf7 \nestcell 
+\pard\intbl\itap3\pardeftab720
+\cf7 \nestcell \lastrow\nestrow\nestcell 
+\pard\intbl\itap2\pardeftab720
+\cf7 \nestcell \lastrow\nestrow
+\pard\intbl\itap1\pardeftab720
+\cf0 \cell \lastrow\row
+}

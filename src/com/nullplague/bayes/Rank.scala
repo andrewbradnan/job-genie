@@ -23,10 +23,10 @@ object rank {
     }
     def rank(in: bayes.Scores) : Option[(Float, String)] = {
         val r = ranks(in, db)
-        if (r.size > 0) Some(r.last) else None
+        if (r.size > 0 & r.last._1 > 0.0f) Some(r.last) else None
     }
     def main(args: Array[String]): Unit = {
-        println(ranks(inout.read(stdin), db))
+        println(ranks(bayes.count(stdin.getLines.toList), db))
     }
 
 }

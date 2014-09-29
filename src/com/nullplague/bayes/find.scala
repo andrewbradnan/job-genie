@@ -21,7 +21,7 @@ object find {
         	ranked_as match { 
         	    case Some(x) => println("Ranking " + j + " " + x._2)
         	    x._2 == args(0)
-        	    case None => false
+        	    case None => println(txt); println("Unknown"); cl.saveCategory(inmap, j); false
         	}
         	
         })
